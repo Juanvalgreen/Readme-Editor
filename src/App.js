@@ -27,12 +27,30 @@ export default function App() {
     }
     
     function updateNote(text) {
-        setNotes(oldNotes => oldNotes.map(oldNote => {
-            return oldNote.id === currentNoteId
-                ? { ...oldNote, body: text }
-                : oldNote
-        }))
+        setNotes(oldNotes => {
+            const newArray=[]
+            for (let i=0; i < oldNotes.length;i++){
+                const oldNote=oldNotes[i];
+                if(oldNote.id === currentNoteId){
+                    newArray.unshift({...oldNote , body: text})
+                }else{
+                    newArray.push(oldNote)
+                }
+            }
+            return newArray
+        })
     }
+
+
+    function deleteNote(event, noteId) {
+        event.stopPropagation() 
+        
+        setNotes( oldArray => oldArray.filter(note => note.id !== noteId)
+        )
+
+    }
+
+
     
     function findCurrentNote() {
         return notes.find(note => {
@@ -51,6 +69,7 @@ export default function App() {
                 className="split"
             >
                 <Sidebar
+                    deleteNote={deleteNote}
                     notes={notes}
                     currentNote={findCurrentNote()}
                     setCurrentNoteId={setCurrentNoteId}
